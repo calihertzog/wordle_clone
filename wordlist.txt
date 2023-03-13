@@ -1,0 +1,15 @@
+adder
+black
+crane
+learn
+quake
+snake
+brake
+lease
+point
+flame
+local
+cache
+plant
+water
+sting
