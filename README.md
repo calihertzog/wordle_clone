@@ -18,6 +18,6 @@ When a guessed word is shorter than five letters, the player is notified and pro
 
 <img width="293" alt="Screenshot 2023-03-12 at 10 30 29 PM" src="https://user-images.githubusercontent.com/127066402/224615892-dea424c2-81c1-4551-943d-f240abaa15e7.png">
 
-If a character is found in the input, the player will be notified that only English letters are to be used.
+If a non alphabetical character is found in the input, the player will be notified that only alphabetical letters are to be used.
 
 <img width="293" alt="Screenshot 2023-03-12 at 10 32 48 PM" src="https://user-images.githubusercontent.com/127066402/224616429-067fd1c9-45f0-40c2-85ec-e609fa649c04.png">
