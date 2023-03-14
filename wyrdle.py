@@ -15,21 +15,21 @@ WORDS_PATH = pathlib.Path(__file__).parent / "wordlist.txt"
 
 def main():
     # pre-process
-    word = get_random_word(WORDS_PATH.read_text(encoding="utf-8").split("\n"))
+    secret_word = get_random_word(WORDS_PATH.read_text(encoding="utf-8").split("\n"))
     guesses = ["_" * NUM_LETTERS] * NUM_GUESSES
 
     # process (main loop)
     with contextlib.suppress(KeyboardInterrupt):
         for idx in range(NUM_GUESSES):
             refresh_page(headline=f"Guess {idx + 1}")
-            show_guesses(guesses, word)
+            show_guesses(guesses, secret_word)
 
             guesses[idx] = guess_word(previous_guesses=guesses[:idx])
-            if guesses[idx] == word:
+            if guesses[idx] == secret_word:
                 break
         
     # post-process
-    game_over(guesses, word, guessed_correctly=guesses[idx] == word)
+    game_over(guesses, secret_word, guessed_correctly=guesses[idx] == secret_word)
 
 def refresh_page(headline):
     console.clear()
@@ -46,23 +46,27 @@ def get_random_word(word_list):
     else:
         console.print(
             f"No words of length {NUM_LETTERS} in the word list", 
-            style="warning",
-            )
+            style="warning"
+        )
         raise SystemExit()
+    
+def get_text_style(letter, correct_letter, secret_word):
+    style = "dim"
+    if letter == correct_letter:
+        style = "bold white on green"
+    elif letter in secret_word:
+        style = "bold white on yellow"
+    elif letter in ascii_letters:
+        style = "white on #666666"
 
-def show_guesses(guesses, word):
+    return style
+
+def show_guesses(guesses, secret_word):
     letter_status = {letter: letter for letter in ascii_uppercase}
     for guess in guesses:
         styled_guess = []
-        for letter, correct in zip(guess, word):
-            if letter == correct:
-                style = "bold white on green"
-            elif letter in word:
-                style = "bold white on yellow"
-            elif letter in ascii_letters:
-                style = "white on #666666"
-            else:
-                style = "dim"
+        for letter, correct_letter in zip(guess, secret_word):
+            style = get_text_style(letter, correct_letter, secret_word)
             styled_guess.append(f"[{style}]{letter}[/]")
             if letter != "_":
                 letter_status[letter] = f"[{style}]{letter}[/]"
@@ -80,26 +84,26 @@ def guess_word(previous_guesses):
     if len(guess) != NUM_LETTERS:
         console.print(
             f"Your guess must be {NUM_LETTERS} letters.", style="warning"
-            )
+        )
         return guess_word(previous_guesses)
     
-    if any((invalid := letter) not in ascii_letters for letter in guess):
+    if any((invalid_character := letter) not in ascii_letters for letter in guess):
         console.print(
-            f"Invalid letter: '{invalid}'. Please use English letters.",
-            style="warning",
+            f"Invalid letter: '{invalid_character}'. Please use alphabet letters.",
+            style="warning"
         )
         return guess_word(previous_guesses)
     
     return guess
 
-def game_over(guesses, word, guessed_correctly):
+def game_over(guesses, secret_word, guessed_correctly):
     refresh_page(headline="Game Over")
-    show_guesses(guesses, word)
+    show_guesses(guesses, secret_word)
 
     if guessed_correctly:
-        console.print(f"\n[bold white on green]Correct, the word is {word}[/]")
+        console.print(f"\n[bold white on green]Correct, the word is {secret_word}[/]")
     else:
-        console.print(f"\n[bold white on red]Sorry, the word was {word}[/]")
+        console.print(f"\n[bold white on red]Sorry, the word was {secret_word}[/]")
 
 if __name__ == "__main__":
     main()
